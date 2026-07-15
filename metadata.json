@@ -1,0 +1,6 @@
+{
+  "name": "Hotel Booking System",
+  "description": "An advanced, full-stack, and innovative luxury hotel reservation platform featuring loyalty tracking, custom packages, admin metrics, and a server-side Gemini AI Chat Concierge.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,22 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# Java/Maven build artifacts
+target/
+*.class
+*.jar
+*.war
+
+# OS files
+Thumbs.db
