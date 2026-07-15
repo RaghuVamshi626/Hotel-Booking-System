@@ -1,18 +1,17 @@
-import express from 'express';
-import path from 'path';
-import { createServer as createViteServer } from 'vite';
-import { GoogleGenAI } from '@google/genai';
-import dotenv from 'dotenv';
+import express from "express";
+import path from "path";
+import { createServer as createViteServer } from "vite";
+import { GoogleGenAI } from "@google/genai";
+import dotenv from "dotenv";
 
 dotenv.config();
-dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
-
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 
 const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY || '',
+  apiKey: process.env.GEMINI_API_KEY || "",
   httpOptions: {
     headers: {
-      'User-Agent': 'aistudio-build',
+      "User-Agent": "aistudio-build",
     },
   },
 });
@@ -24,7 +23,7 @@ async function startServer() {
   app.use(express.json());
 
   // API Route: AI Concierge Chat Grounded with Hotels Context
-  app.post('/api/chat', async (req, res) => {
+  app.post("/api/chat", async (req, res) => {
     try {
       const { message, history, hotelsContext } = req.body;
 
@@ -36,8 +35,13 @@ async function startServer() {
 
       // Convert history to appropriate system structure if needed or pass as context
       const formattedHistory = history
-        ? history.slice(-6).map((h: any) => `${h.role === 'user' ? 'Guest' : 'Concierge'}: ${h.text}`).join('\n')
-        : '';
+        ? history
+            .slice(-6)
+            .map(
+              (h) => `${h.role === "user" ? "Guest" : "Concierge"}: ${h.text}`,
+            )
+            .join("\n")
+        : "";
 
       const systemInstruction = `
 You are the highly sophisticated, warm, and elite AI Concierge for Aura Haven Luxury Resort Sanctuaries.
@@ -65,7 +69,7 @@ Please provide a helpful, elegant, and grounded response as the Aura Haven Conci
 `;
 
       const response = await ai.models.generateContent({
-        model: 'gemini-3.5-flash',
+        model: "gemini-3.5-flash",
         contents: prompt,
         config: {
           systemInstruction,
@@ -74,85 +78,85 @@ Please provide a helpful, elegant, and grounded response as the Aura Haven Conci
       });
 
       res.json({ text: response.text });
-    } catch (error: any) {
-      console.error('Gemini API Error:', error);
+    } catch (error) {
+      console.error("Gemini API Error:", error);
       res.status(500).json({
-        text: `My sincere apologies, but I encountered an issue consulting our resort networks. (Details: ${error.message || 'Unknown network delay'})`,
+        text: `My sincere apologies, but I encountered an issue consulting our resort networks. (Details: ${error.message || "Unknown network delay"})`,
       });
     }
   });
 
   // REST Mock Endpoint: SignUp / Login (To emulate Spring Boot Auth REST controller behavior in live preview)
-  app.post('/api/auth/signup', (req, res) => {
+  app.post("/api/auth/signup", (req, res) => {
     const { email, password, fullName, role } = req.body;
     res.json({
-      status: 'SUCCESS',
+      status: "SUCCESS",
       user: {
-        id: 'user_' + Math.random().toString(36).substring(2, 9),
+        id: "user_" + Math.random().toString(36).substring(2, 9),
         email,
         fullName,
-        role: role || 'GUEST',
+        role: role || "GUEST",
         loyaltyPoints: 1250,
-        loyaltyTier: 'Gold',
+        loyaltyTier: "Gold",
       },
     });
   });
 
-  app.post('/api/auth/login', (req, res) => {
+  app.post("/api/auth/login", (req, res) => {
     const { email, password } = req.body;
     res.json({
-      status: 'SUCCESS',
+      status: "SUCCESS",
       user: {
-        id: 'user_active',
+        id: "user_active",
         email,
-        fullName: 'Sarah Jenkins',
-        role: email.includes('admin') ? 'ADMIN' : 'GUEST',
+        fullName: "Sarah Jenkins",
+        role: email.includes("admin") ? "ADMIN" : "GUEST",
         loyaltyPoints: 3400,
-        loyaltyTier: 'Platinum',
+        loyaltyTier: "Platinum",
       },
     });
   });
 
   // Mock REST API: Bookings Controller endpoint
-  app.get('/api/bookings', (req, res) => {
+  app.get("/api/bookings", (req, res) => {
     res.json({
-      status: 'SUCCESS',
+      status: "SUCCESS",
       bookings: [
         {
-          id: 'AH-883921',
-          userId: 'guest_123',
-          hotelId: 'resort_bali',
-          hotelName: 'The Grand Oasis Resort & Spa',
-          roomNumber: '101',
-          roomType: 'Grand Lagoon Villa',
-          checkIn: '2026-07-20',
-          checkOut: '2026-07-24',
+          id: "AH-883921",
+          userId: "guest_123",
+          hotelId: "resort_bali",
+          hotelName: "The Grand Oasis Resort & Spa",
+          roomNumber: "101",
+          roomType: "Grand Lagoon Villa",
+          checkIn: "2026-07-20",
+          checkOut: "2026-07-24",
           guests: 2,
           totalAmount: 1280,
-          status: 'UPCOMING',
-          paymentStatus: 'PAID',
-          addons: ['Organic Breakfast Buffet', 'Airport Private Tesla Shuttle'],
-        }
-      ]
+          status: "UPCOMING",
+          paymentStatus: "PAID",
+          addons: ["Organic Breakfast Buffet", "Airport Private Tesla Shuttle"],
+        },
+      ],
     });
   });
 
   // Serve static assets or mount Vite dev middleware
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
-      appType: 'spa',
+      appType: "spa",
     });
     app.use(vite.middlewares);
   } else {
-    const distPath = path.join(process.cwd(), 'dist');
+    const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(distPath, "index.html"));
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  app.listen(PORT, "0.0.0.0", () => {
     console.log(`Aura Haven full-stack server running on port ${PORT}`);
   });
 }

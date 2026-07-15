@@ -1,18 +1,6 @@
-import React from 'react';
-import { Search, Calendar, Users, Star } from 'lucide-react';
-import { motion } from 'motion/react';
-
-interface HeroProps {
-  searchQuery: string;
-  onSearchChange: (val: string) => void;
-  checkIn: string;
-  onCheckInChange: (val: string) => void;
-  checkOut: string;
-  onCheckOutChange: (val: string) => void;
-  guestCount: number;
-  onGuestCountChange: (val: number) => void;
-  onSearchSubmit: () => void;
-}
+import React from "react";
+import { Search, Calendar, Users, Star } from "lucide-react";
+import { motion } from "motion/react";
 
 export default function Hero({
   searchQuery,
@@ -24,7 +12,7 @@ export default function Hero({
   guestCount,
   onGuestCountChange,
   onSearchSubmit,
-}: HeroProps) {
+}) {
   return (
     <div className="relative min-h-[480px] flex items-center justify-center bg-gradient-to-b from-[#070913]/30 via-[#0a0c16]/50 to-[#070913] text-white overflow-hidden py-16 px-4 border-b border-white/5">
       {/* Decorative backdrop details */}
@@ -53,10 +41,15 @@ export default function Hero({
         >
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-light tracking-tight leading-tight">
             Crafting Unforgettable <br />
-            <span className="font-medium font-display bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent italic">Sanctuaries</span> For Connoisseurs
+            <span className="font-medium font-display bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent italic">
+              Sanctuaries
+            </span>{" "}
+            For Connoisseurs
           </h1>
           <p className="max-w-2xl mx-auto text-sm sm:text-base text-slate-300 font-light leading-relaxed">
-            Discover a curated collection of ultra-luxurious, state-of-the-art retreats offering bespoke experiences, intuitive automation, and unparalleled warmth.
+            Discover a curated collection of ultra-luxurious, state-of-the-art
+            retreats offering bespoke experiences, intuitive automation, and
+            unparalleled warmth.
           </p>
         </motion.div>
 
@@ -72,7 +65,9 @@ export default function Hero({
             <div className="md:col-span-4 flex items-center gap-2.5 px-3 border-b md:border-b-0 md:border-r border-white/10 pb-3 md:pb-0">
               <Search className="w-5 h-5 text-amber-400 shrink-0" />
               <div className="text-left w-full">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Destination</label>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Destination
+                </label>
                 <input
                   type="text"
                   placeholder="Where would you like to stay?"
@@ -87,7 +82,9 @@ export default function Hero({
             <div className="md:col-span-3 flex items-center gap-2.5 px-3 border-b md:border-b-0 md:border-r border-white/10 pb-3 md:pb-0">
               <Calendar className="w-5 h-5 text-amber-400 shrink-0" />
               <div className="text-left w-full">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Check In</label>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Check In
+                </label>
                 <input
                   type="date"
                   value={checkIn}
@@ -101,7 +98,9 @@ export default function Hero({
             <div className="md:col-span-3 flex items-center gap-2.5 px-3 pb-3 md:pb-0">
               <Calendar className="w-5 h-5 text-amber-400 shrink-0" />
               <div className="text-left w-full">
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Check Out</label>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Check Out
+                </label>
                 <input
                   type="date"
                   value={checkOut}
@@ -116,15 +115,23 @@ export default function Hero({
               <div className="flex items-center gap-1 text-left">
                 <Users className="w-5 h-5 text-amber-400 shrink-0" />
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Guests</label>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    Guests
+                  </label>
                   <select
                     value={guestCount}
-                    onChange={(e) => onGuestCountChange(parseInt(e.target.value))}
+                    onChange={(e) =>
+                      onGuestCountChange(parseInt(e.target.value))
+                    }
                     className="text-sm font-medium text-slate-100 bg-transparent border-none outline-none focus:ring-0 p-0 cursor-pointer [color-scheme:dark]"
                   >
                     {[1, 2, 3, 4, 5, 6].map((n) => (
-                      <option key={n} value={n} className="bg-[#0e101f] text-slate-100">
-                        {n} {n === 1 ? 'Guest' : 'Guests'}
+                      <option
+                        key={n}
+                        value={n}
+                        className="bg-[#0e101f] text-slate-100"
+                      >
+                        {n} {n === 1 ? "Guest" : "Guests"}
                       </option>
                     ))}
                   </select>

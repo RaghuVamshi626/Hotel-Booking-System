@@ -1,14 +1,11 @@
-import React from 'react';
-import { User } from '../types';
-import { Hotel, User as UserIcon, LogOut, ShieldAlert, BookOpen } from 'lucide-react';
-
-interface NavigationProps {
-  user: User | null;
-  onOpenAuth: () => void;
-  onLogout: () => void;
-  currentTab: 'explore' | 'bookings' | 'admin';
-  onChangeTab: (tab: 'explore' | 'bookings' | 'admin') => void;
-}
+import React from "react";
+import {
+  Hotel,
+  User as UserIcon,
+  LogOut,
+  ShieldAlert,
+  BookOpen,
+} from "lucide-react";
 
 export default function Navigation({
   user,
@@ -16,13 +13,16 @@ export default function Navigation({
   onLogout,
   currentTab,
   onChangeTab,
-}: NavigationProps) {
+}) {
   return (
     <nav className="sticky top-0 z-40 bg-[#070913]/75 backdrop-blur-xl border-b border-white/5 shadow-2xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20">
           {/* Logo */}
-          <div className="flex items-center space-x-3 cursor-pointer" onClick={() => onChangeTab('explore')}>
+          <div
+            className="flex items-center space-x-3 cursor-pointer"
+            onClick={() => onChangeTab("explore")}
+          >
             <div className="p-2.5 bg-gradient-to-br from-amber-500 to-amber-700 rounded-xl text-white shadow-lg shadow-amber-600/30">
               <Hotel className="w-6 h-6" />
             </div>
@@ -34,23 +34,23 @@ export default function Navigation({
           {/* Navigation Controls */}
           <div className="flex items-center space-x-6">
             <button
-              onClick={() => onChangeTab('explore')}
+              onClick={() => onChangeTab("explore")}
               className={`font-display text-sm font-medium tracking-wide transition-all cursor-pointer ${
-                currentTab === 'explore'
-                  ? 'text-amber-400 font-semibold border-b-2 border-amber-500 pb-1 pt-1'
-                  : 'text-slate-300 hover:text-amber-400'
+                currentTab === "explore"
+                  ? "text-amber-400 font-semibold border-b-2 border-amber-500 pb-1 pt-1"
+                  : "text-slate-300 hover:text-amber-400"
               }`}
             >
               Explore Stays
             </button>
 
-            {user && user.role === 'GUEST' && (
+            {user && user.role === "GUEST" && (
               <button
-                onClick={() => onChangeTab('bookings')}
+                onClick={() => onChangeTab("bookings")}
                 className={`flex items-center gap-1.5 font-display text-sm font-medium tracking-wide transition-all cursor-pointer ${
-                  currentTab === 'bookings'
-                    ? 'text-amber-400 font-semibold border-b-2 border-amber-500 pb-1 pt-1'
-                    : 'text-slate-300 hover:text-amber-400'
+                  currentTab === "bookings"
+                    ? "text-amber-400 font-semibold border-b-2 border-amber-500 pb-1 pt-1"
+                    : "text-slate-300 hover:text-amber-400"
                 }`}
               >
                 <BookOpen className="w-4 h-4" />
@@ -58,13 +58,13 @@ export default function Navigation({
               </button>
             )}
 
-            {user && user.role === 'ADMIN' && (
+            {user && user.role === "ADMIN" && (
               <button
-                onClick={() => onChangeTab('admin')}
+                onClick={() => onChangeTab("admin")}
                 className={`flex items-center gap-1.5 font-display text-sm font-medium tracking-wide transition-all cursor-pointer ${
-                  currentTab === 'admin'
-                    ? 'text-amber-400 font-semibold border-b-2 border-amber-500 pb-1 pt-1'
-                    : 'text-slate-300 hover:text-amber-400'
+                  currentTab === "admin"
+                    ? "text-amber-400 font-semibold border-b-2 border-amber-500 pb-1 pt-1"
+                    : "text-slate-300 hover:text-amber-400"
                 }`}
               >
                 <ShieldAlert className="w-4 h-4" />
@@ -80,7 +80,9 @@ export default function Navigation({
                     {user.fullName}
                   </span>
                   <span className="text-[10px] uppercase font-bold tracking-widest font-mono text-amber-400">
-                    {user.role === 'ADMIN' ? 'Partner Admin' : `${user.loyaltyTier} Tier`}
+                    {user.role === "ADMIN"
+                      ? "Partner Admin"
+                      : `${user.loyaltyTier} Tier`}
                   </span>
                 </div>
                 <button

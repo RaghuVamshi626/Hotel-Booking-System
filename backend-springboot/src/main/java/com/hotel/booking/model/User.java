@@ -29,4 +29,8 @@ public class User {
 
     private int loyaltyPoints;
     private String loyaltyTier; // "Silver", "Gold", "Platinum"
+
+    private String preferredBeverage;
+    private String preferredPillow;
+    private String preferredSoundscape;
 }

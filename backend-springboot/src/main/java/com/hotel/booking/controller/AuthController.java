@@ -1,69 +1,44 @@
 package com.hotel.booking.controller;
 
-import com.hotel.booking.model.User;
-import com.hotel.booking.repository.UserRepository;
+import com.hotel.booking.payload.LoginRequest;
+import com.hotel.booking.payload.SignupRequest;
+import com.hotel.booking.payload.JwtResponse;
+import com.hotel.booking.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
 public class AuthController {
 
     @Autowired
-    private UserRepository userRepository;
+    private AuthService authService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        String password = request.get("password");
-        String fullName = request.get("fullName");
-        String role = request.getOrDefault("role", "GUEST");
-
-        if (userRepository.findByEmail(email).isPresent()) {
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "Email is already registered.");
-            return ResponseEntity.badRequest().body(response);
+    @PostMapping({"/api/auth/signup", "/api/auth/register", "/register"})
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
+        try {
+            JwtResponse response = authService.register(signupRequest);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(errorResponse);
         }
-
-        User user = User.builder()
-                .email(email)
-                .password(password) // Note: In production, please use BCryptPasswordEncoder
-                .fullName(fullName)
-                .role(role)
-                .loyaltyPoints(role.equals("GUEST") ? 1250 : 0)
-                .loyaltyTier("Gold")
-                .build();
-
-        userRepository.save(user);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "SUCCESS");
-        response.put("user", user);
-        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody Map<String, String> request) {
-        String email = request.get("email");
-        String password = request.get("password");
-
-        Optional<User> userOpt = userRepository.findByEmail(email);
-
-        if (userOpt.isEmpty() || !userOpt.get().getPassword().equals(password)) {
-            Map<String, String> response = new HashMap<>();
-            response.put("error", "Invalid email or password credentials.");
-            return ResponseEntity.status(401).body(response);
+    @PostMapping({"/api/auth/login", "/login"})
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginRequest loginRequest) {
+        try {
+            JwtResponse response = authService.login(loginRequest);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Invalid email or password credentials.");
+            return ResponseEntity.status(401).body(errorResponse);
         }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "SUCCESS");
-        response.put("user", userOpt.get());
-        return ResponseEntity.ok(response);
     }
 }

@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { User } from '../types';
+import React, { useState, useEffect } from "react";
 import {
   X,
   Mail,
   Lock,
   User as UserIcon,
-  LogIn,
-  Key,
   Sparkles,
   Eye,
   EyeOff,
@@ -19,128 +16,166 @@ import {
   ArrowRight,
   ShieldCheck,
   Zap,
-  Crown
-} from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+  Crown,
+} from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
-interface AuthModalProps {
-  onClose?: () => void;
-  onLoginSuccess: (user: User) => void;
-  isGated?: boolean;
-}
-
-type LoyaltyTier = 'Silver' | 'Gold' | 'Platinum';
-
-export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: AuthModalProps) {
+export default function AuthModal({
+  onClose,
+  onLoginSuccess,
+  isGated = false,
+}) {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [role, setRole] = useState<'GUEST' | 'ADMIN'>('GUEST');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [role, setRole] = useState("GUEST");
+  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   // Innovation States
-  const [selectedTier, setSelectedTier] = useState<LoyaltyTier>('Gold');
-  const [preferredBeverage, setPreferredBeverage] = useState('Champagne');
-  const [preferredPillow, setPreferredPillow] = useState('Goose Down');
-  const [preferredSoundscape, setPreferredSoundscape] = useState('Ocean Waves');
-  
+  const [selectedTier, setSelectedTier] = useState("Gold");
+  const [preferredBeverage, setPreferredBeverage] = useState("Champagne");
+  const [preferredPillow, setPreferredPillow] = useState("Goose Down");
+  const [preferredSoundscape, setPreferredSoundscape] = useState("Ocean Waves");
   // Biometric Sandbox states
   const [isScanning, setIsScanning] = useState(false);
-  const [scanStep, setScanStep] = useState<'idle' | 'scanning' | 'success' | 'failed'>('idle');
-  const [scanRole, setScanRole] = useState<'GUEST' | 'ADMIN'>('GUEST');
+  const [scanStep, setScanStep] = useState("idle");
+  const [scanRole, setScanRole] = useState("GUEST");
 
   // Sync Tier with form role
   useEffect(() => {
-    if (role === 'ADMIN') {
-      setSelectedTier('Platinum');
+    if (role === "ADMIN") {
+      setSelectedTier("Platinum");
     } else {
-      setSelectedTier('Gold');
+      setSelectedTier("Gold");
     }
   }, [role]);
 
   // Real-time password strength estimation themed as "Vault Protection Tier"
-  const getPasswordStrength = (pass: string) => {
-    if (!pass) return { score: 0, label: 'Vault Open', color: 'bg-slate-700/50', textColor: 'text-slate-400', width: 'w-0' };
-    if (pass.length < 5) return { score: 1, label: 'Standard Keycard', color: 'bg-red-500/50 border border-red-500/20', textColor: 'text-red-400', width: 'w-1/3' };
-    if (pass.length < 8) return { score: 2, label: 'Dual-Factor Encrypted', color: 'bg-amber-500/50 border border-amber-500/20', textColor: 'text-amber-400', width: 'w-2/3' };
-    return { score: 3, label: 'Quantum Biometric Vault', color: 'bg-green-500/50 border border-green-500/20', textColor: 'text-green-400', width: 'w-full' };
+  const getPasswordStrength = (pass) => {
+    if (!pass)
+      return {
+        score: 0,
+        label: "Vault Open",
+        color: "bg-slate-700/50",
+        textColor: "text-slate-400",
+        width: "w-0",
+      };
+    if (pass.length < 5)
+      return {
+        score: 1,
+        label: "Standard Keycard",
+        color: "bg-red-500/50 border border-red-500/20",
+        textColor: "text-red-400",
+        width: "w-1/3",
+      };
+    if (pass.length < 8)
+      return {
+        score: 2,
+        label: "Dual-Factor Encrypted",
+        color: "bg-amber-500/50 border border-amber-500/20",
+        textColor: "text-amber-400",
+        width: "w-2/3",
+      };
+    return {
+      score: 3,
+      label: "Quantum Biometric Vault",
+      color: "bg-green-500/50 border border-green-500/20",
+      textColor: "text-green-400",
+      width: "w-full",
+    };
   };
 
   const strength = getPasswordStrength(password);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!email || !password || (isSignUp && !fullName)) {
-      setError('Please provide all credentials.');
+      setError("Please provide all credentials.");
       return;
     }
 
-    if (!email.includes('@')) {
-      setError('Kindly enter a valid email address.');
+    if (!email.includes("@")) {
+      setError("Kindly enter a valid email address.");
       return;
     }
 
     // Capture selections in the user object
-    const mockUser: User = {
+    const mockUser = {
       id: Math.random().toString(36).substring(2, 9),
       email: email.toLowerCase(),
-      fullName: isSignUp ? fullName : (email.toLowerCase().includes('admin') ? 'Executive Partner' : 'Vamshi Raghu'),
-      role: isSignUp ? role : (email.toLowerCase().includes('admin') ? 'ADMIN' : 'GUEST'),
-      loyaltyPoints: role === 'GUEST' ? (isSignUp ? 1750 : 1250) : 0, // Extra 500 Welcome bonus if registering!
+      fullName: isSignUp
+        ? fullName
+        : email.toLowerCase().includes("admin")
+          ? "Executive Partner"
+          : "Vamshi Raghu",
+      role: isSignUp
+        ? role
+        : email.toLowerCase().includes("admin")
+          ? "ADMIN"
+          : "GUEST",
+      loyaltyPoints: role === "GUEST" ? (isSignUp ? 1750 : 1250) : 0, // Extra 500 Welcome bonus if registering!
       loyaltyTier: selectedTier,
-      preferredBeverage: isSignUp ? preferredBeverage : 'Champagne',
-      preferredPillow: isSignUp ? preferredPillow : 'Goose Down',
-      preferredSoundscape: isSignUp ? preferredSoundscape : 'Ocean Waves',
+      preferredBeverage: isSignUp ? preferredBeverage : "Champagne",
+      preferredPillow: isSignUp ? preferredPillow : "Goose Down",
+      preferredSoundscape: isSignUp ? preferredSoundscape : "Ocean Waves",
     };
 
     onLoginSuccess(mockUser);
     onClose?.();
   };
 
-  const handleDemoLogin = (demoRole: 'GUEST' | 'ADMIN') => {
-    const demoUser: User = {
-      id: demoRole === 'GUEST' ? 'guest_123' : 'admin_123',
-      email: demoRole === 'GUEST' ? 'guest@aurahaven.com' : 'admin@aurahaven.com',
-      fullName: demoRole === 'GUEST' ? 'Sarah Jenkins' : 'Michael Vance (Manager)',
+  const handleDemoLogin = (demoRole) => {
+    const demoUser = {
+      id: demoRole === "GUEST" ? "guest_123" : "admin_123",
+      email:
+        demoRole === "GUEST" ? "guest@aurahaven.com" : "admin@aurahaven.com",
+      fullName:
+        demoRole === "GUEST" ? "Sarah Jenkins" : "Michael Vance (Manager)",
       role: demoRole,
-      loyaltyPoints: demoRole === 'GUEST' ? 3400 : 0,
-      loyaltyTier: demoRole === 'GUEST' ? 'Platinum' : 'Gold',
-      preferredBeverage: 'Matcha',
-      preferredPillow: 'Goose Down',
-      preferredSoundscape: 'Sunset Ocean Waves',
+      loyaltyPoints: demoRole === "GUEST" ? 3400 : 0,
+      loyaltyTier: demoRole === "GUEST" ? "Platinum" : "Gold",
+      preferredBeverage: "Matcha",
+      preferredPillow: "Goose Down",
+      preferredSoundscape: "Sunset Ocean Waves",
     };
     onLoginSuccess(demoUser);
     onClose?.();
   };
 
   // Simulate ultra-futuristic FaceID / Fingerprint scanning
-  const triggerBiometricScan = (roleType: 'GUEST' | 'ADMIN') => {
+  const triggerBiometricScan = (roleType) => {
     setScanRole(roleType);
     setIsScanning(true);
-    setScanStep('scanning');
+    setScanStep("scanning");
 
     setTimeout(() => {
-      setScanStep('success');
+      setScanStep("success");
       setTimeout(() => {
-        const biometricUser: User = {
-          id: roleType === 'GUEST' ? 'guest_biometric' : 'admin_biometric',
-          email: roleType === 'GUEST' ? 'biometric-guest@aurahaven.com' : 'biometric-admin@aurahaven.com',
-          fullName: roleType === 'GUEST' ? 'Sarah Jenkins (Biometric Secure)' : 'Michael Vance (Manager Scan)',
+        const biometricUser = {
+          id: roleType === "GUEST" ? "guest_biometric" : "admin_biometric",
+          email:
+            roleType === "GUEST"
+              ? "biometric-guest@aurahaven.com"
+              : "biometric-admin@aurahaven.com",
+          fullName:
+            roleType === "GUEST"
+              ? "Sarah Jenkins (Biometric Secure)"
+              : "Michael Vance (Manager Scan)",
           role: roleType,
-          loyaltyPoints: roleType === 'GUEST' ? 4500 : 0,
-          loyaltyTier: 'Platinum',
-          preferredBeverage: 'Champagne',
-          preferredPillow: 'Cooling Gel Memory Foam',
-          preferredSoundscape: 'Luxury Rooftop Jazz Lofi',
+          loyaltyPoints: roleType === "GUEST" ? 4500 : 0,
+          loyaltyTier: "Platinum",
+          preferredBeverage: "Champagne",
+          preferredPillow: "Cooling Gel Memory Foam",
+          preferredSoundscape: "Luxury Rooftop Jazz Lofi",
         };
         onLoginSuccess(biometricUser);
         onClose?.();
         setIsScanning(false);
-        setScanStep('idle');
+        setScanStep("idle");
       }, 800);
     }, 1800);
   };
@@ -148,26 +183,26 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
   // Luxury perks dynamic lists
   const tierPerks = {
     Silver: [
-      'Basic keyless automation entry',
-      'Standard high-speed resort Wifi',
-      'Complimentary botanical water bottle on arrival',
-      'Earn 5% cashback in Aura loyalty points'
+      "Basic keyless automation entry",
+      "Standard high-speed resort Wifi",
+      "Complimentary botanical water bottle on arrival",
+      "Earn 5% cashback in Aura loyalty points",
     ],
     Gold: [
-      'Pre-selected pillow menu comfort',
-      'Early access to Lagoon Pool lounges',
-      '1x Complimentary luxury cocktail/beverage per day',
-      'Late Checkout entitlement (up to 2:00 PM)',
-      'Earn 10% cashback in Aura loyalty points'
+      "Pre-selected pillow menu comfort",
+      "Early access to Lagoon Pool lounges",
+      "1x Complimentary luxury cocktail/beverage per day",
+      "Late Checkout entitlement (up to 2:00 PM)",
+      "Earn 10% cashback in Aura loyalty points",
     ],
     Platinum: [
-      'Dedicated elite concierge AI companion',
-      'Priority helicopter landing & Tesla Shuttle transport',
-      'Full-day spa access & thermal therapy session',
-      'Guaranteed suite class room-type upgrades',
-      'Unlimited gourmet bar dining selection',
-      'Earn 15% cashback in Aura loyalty points'
-    ]
+      "Dedicated elite concierge AI companion",
+      "Priority helicopter landing & Tesla Shuttle transport",
+      "Full-day spa access & thermal therapy session",
+      "Guaranteed suite class room-type upgrades",
+      "Unlimited gourmet bar dining selection",
+      "Earn 15% cashback in Aura loyalty points",
+    ],
   };
 
   return (
@@ -186,7 +221,7 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 120 }}
+        transition={{ type: "spring", damping: 25, stiffness: 120 }}
         className="relative glass-panel-dark max-w-4xl w-full rounded-3xl shadow-2xl border border-white/10 overflow-hidden z-10 grid grid-cols-1 md:grid-cols-12 max-h-[90vh] overflow-y-auto"
       >
         {/* Header Close Button */}
@@ -212,57 +247,79 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
             <div>
               <div className="flex items-center gap-2">
                 <Crown className="w-5 h-5 text-amber-400 animate-pulse" />
-                <span className="font-mono text-[10px] tracking-widest font-bold text-amber-400 uppercase">AURA CONCIERGE NETWORK</span>
+                <span className="font-mono text-[10px] tracking-widest font-bold text-amber-400 uppercase">
+                  AURA CONCIERGE NETWORK
+                </span>
               </div>
-              <h3 className="text-xl font-display font-bold text-white mt-1">Aura Membership</h3>
-              <p className="text-xs text-slate-400 font-light mt-0.5">Customize your luxury credentials and unlock automated privilege tiers.</p>
+              <h3 className="text-xl font-display font-bold text-white mt-1">
+                Aura Membership
+              </h3>
+              <p className="text-xs text-slate-400 font-light mt-0.5">
+                Customize your luxury credentials and unlock automated privilege
+                tiers.
+              </p>
             </div>
 
             {/* INTERACTIVE MEMBERSHIP CARD PREVIEW */}
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1.02, rotateY: -2 }}
               className={`relative rounded-2xl p-5 shadow-2xl border flex flex-col justify-between h-44 overflow-hidden transition-all duration-500 ${
-                selectedTier === 'Silver'
-                  ? 'bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 border-slate-500/30 text-slate-200'
-                  : selectedTier === 'Gold'
-                    ? 'bg-gradient-to-br from-amber-700/80 via-amber-900/90 to-amber-950 border-amber-500/40 text-amber-200'
-                    : 'bg-gradient-to-br from-slate-900 via-[#161a35] to-[#070912] border-amber-400/30 text-slate-200'
+                selectedTier === "Silver"
+                  ? "bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 border-slate-500/30 text-slate-200"
+                  : selectedTier === "Gold"
+                    ? "bg-gradient-to-br from-amber-700/80 via-amber-900/90 to-amber-950 border-amber-500/40 text-amber-200"
+                    : "bg-gradient-to-br from-slate-900 via-[#161a35] to-[#070912] border-amber-400/30 text-slate-200"
               }`}
             >
               {/* Card micro details */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl pointer-events-none" />
-              
+
               <div className="flex justify-between items-start">
                 <div>
-                  <span className="text-[9px] font-bold font-mono uppercase tracking-widest opacity-70">Aura Sanctuary Token</span>
+                  <span className="text-[9px] font-bold font-mono uppercase tracking-widest opacity-70">
+                    Aura Sanctuary Token
+                  </span>
                   <h4 className="text-sm font-semibold tracking-wide text-white mt-0.5">
-                    {fullName || 'Sarah Jenkins'}
+                    {fullName || "Sarah Jenkins"}
                   </h4>
                 </div>
-                <div className={`p-1.5 rounded-lg border ${
-                  selectedTier === 'Silver' ? 'bg-slate-800/80 border-slate-600/50 text-slate-300' :
-                  selectedTier === 'Gold' ? 'bg-amber-950/80 border-amber-500/40 text-amber-400' :
-                  'bg-amber-500/10 border-amber-500/25 text-amber-400'
-                }`}>
+                <div
+                  className={`p-1.5 rounded-lg border ${
+                    selectedTier === "Silver"
+                      ? "bg-slate-800/80 border-slate-600/50 text-slate-300"
+                      : selectedTier === "Gold"
+                        ? "bg-amber-950/80 border-amber-500/40 text-amber-400"
+                        : "bg-amber-500/10 border-amber-500/25 text-amber-400"
+                  }`}
+                >
                   <Award className="w-5 h-5" />
                 </div>
               </div>
 
               {/* simulated dynamic points indicator */}
               <div>
-                <span className="text-[10px] font-mono text-slate-400 block">Introductory Vault Credit</span>
+                <span className="text-[10px] font-mono text-slate-400 block">
+                  Introductory Vault Credit
+                </span>
                 <span className="text-xl font-bold font-mono tracking-tight text-white flex items-center gap-1">
-                  {isSignUp ? '+1,750' : '1,250'} <span className="text-[11px] font-light text-amber-400">Aura Pts</span>
+                  {isSignUp ? "+1,750" : "1,250"}{" "}
+                  <span className="text-[11px] font-light text-amber-400">
+                    Aura Pts
+                  </span>
                 </span>
                 <p className="text-[9px] text-slate-300 font-light mt-0.5 italic">
-                  {isSignUp ? '+500 Registration bonus applied' : 'Initial booking ledger synced'}
+                  {isSignUp
+                    ? "+500 Registration bonus applied"
+                    : "Initial booking ledger synced"}
                 </p>
               </div>
 
               {/* bottom chips */}
               <div className="flex justify-between items-center text-[10px] font-mono border-t border-white/10 pt-2 opacity-90">
                 <span>TIER: {selectedTier.toUpperCase()}</span>
-                <span className="text-amber-400 font-bold uppercase tracking-widest text-[9px]">Verified Sanctuary</span>
+                <span className="text-amber-400 font-bold uppercase tracking-widest text-[9px]">
+                  Verified Sanctuary
+                </span>
               </div>
             </motion.div>
 
@@ -272,15 +329,15 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                 Explore Perks by Privilege Level:
               </span>
               <div className="grid grid-cols-3 gap-1 bg-white/5 border border-white/5 p-1 rounded-xl">
-                {(['Silver', 'Gold', 'Platinum'] as LoyaltyTier[]).map((t) => (
+                {["Silver", "Gold", "Platinum"].map((t) => (
                   <button
                     key={t}
                     type="button"
                     onClick={() => setSelectedTier(t)}
                     className={`py-1 text-[10px] font-semibold tracking-wider uppercase rounded-lg transition-all cursor-pointer ${
                       selectedTier === t
-                        ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-md'
-                        : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
+                        ? "bg-amber-500/10 text-amber-400 border border-amber-500/20 shadow-md"
+                        : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
                     }`}
                   >
                     {t}
@@ -291,19 +348,21 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
 
             {/* SELECTOR FOR BESPOKE WELCOME AMENITIES (Dynamic Registration configuration) */}
             {isSignUp && (
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
+                animate={{ opacity: 1, height: "auto" }}
                 className="space-y-3.5 bg-white/5 border border-white/5 p-3.5 rounded-2xl relative"
               >
                 <div className="absolute top-2 right-2 flex items-center gap-0.5">
                   <Zap className="w-3 h-3 text-amber-400" />
-                  <span className="text-[9px] font-mono font-bold text-amber-400">+500 PTS</span>
+                  <span className="text-[9px] font-mono font-bold text-amber-400">
+                    +500 PTS
+                  </span>
                 </div>
                 <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">
                   Personalize Your Welcome (Demo):
                 </span>
-                
+
                 <div className="space-y-2 text-xs">
                   {/* Drink Selector */}
                   <div className="flex justify-between items-center">
@@ -315,9 +374,15 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                       onChange={(e) => setPreferredBeverage(e.target.value)}
                       className="bg-slate-900/60 border border-white/5 rounded-lg px-2 py-1 text-[11px] text-slate-200 focus:outline-none focus:border-amber-500"
                     >
-                      <option value="Champagne" className="bg-[#0e101f]">Champagne Bottle</option>
-                      <option value="Matcha" className="bg-[#0e101f]">Matcha Ceremonial Tea</option>
-                      <option value="Ristretto" className="bg-[#0e101f]">Double Shot Ristretto</option>
+                      <option value="Champagne" className="bg-[#0e101f]">
+                        Champagne Bottle
+                      </option>
+                      <option value="Matcha" className="bg-[#0e101f]">
+                        Matcha Ceremonial Tea
+                      </option>
+                      <option value="Ristretto" className="bg-[#0e101f]">
+                        Double Shot Ristretto
+                      </option>
                     </select>
                   </div>
 
@@ -331,25 +396,38 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                       onChange={(e) => setPreferredPillow(e.target.value)}
                       className="bg-slate-900/60 border border-white/5 rounded-lg px-2 py-1 text-[11px] text-slate-200 focus:outline-none focus:border-amber-500"
                     >
-                      <option value="Goose Down" className="bg-[#0e101f]">Siberian Goose Down</option>
-                      <option value="Lavender" className="bg-[#0e101f]">Lavender Infused Sleep</option>
-                      <option value="Memory Foam" className="bg-[#0e101f]">Cooling Gel Memory Foam</option>
+                      <option value="Goose Down" className="bg-[#0e101f]">
+                        Siberian Goose Down
+                      </option>
+                      <option value="Lavender" className="bg-[#0e101f]">
+                        Lavender Infused Sleep
+                      </option>
+                      <option value="Memory Foam" className="bg-[#0e101f]">
+                        Cooling Gel Memory Foam
+                      </option>
                     </select>
                   </div>
 
                   {/* Music Selector */}
                   <div className="flex justify-between items-center">
                     <span className="text-slate-400 flex items-center gap-1">
-                      <Music className="w-3.5 h-3.5 text-amber-400" /> Soundscape
+                      <Music className="w-3.5 h-3.5 text-amber-400" />{" "}
+                      Soundscape
                     </span>
                     <select
                       value={preferredSoundscape}
                       onChange={(e) => setPreferredSoundscape(e.target.value)}
                       className="bg-slate-900/60 border border-white/5 rounded-lg px-2 py-1 text-[11px] text-slate-200 focus:outline-none focus:border-amber-500"
                     >
-                      <option value="Ocean Waves" className="bg-[#0e101f]">Sunset Ocean Waves</option>
-                      <option value="Forest" className="bg-[#0e101f]">Ambient Rainforest Rain</option>
-                      <option value="Lofi" className="bg-[#0e101f]">Luxury Rooftop Jazz Lofi</option>
+                      <option value="Ocean Waves" className="bg-[#0e101f]">
+                        Sunset Ocean Waves
+                      </option>
+                      <option value="Forest" className="bg-[#0e101f]">
+                        Ambient Rainforest Rain
+                      </option>
+                      <option value="Lofi" className="bg-[#0e101f]">
+                        Luxury Rooftop Jazz Lofi
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -389,10 +467,12 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                   type="button"
                   onClick={() => {
                     setIsSignUp(false);
-                    setError('');
+                    setError("");
                   }}
                   className={`text-lg font-display font-semibold pb-1 relative transition-all cursor-pointer ${
-                    !isSignUp ? 'text-white font-bold' : 'text-slate-400 hover:text-slate-200'
+                    !isSignUp
+                      ? "text-white font-bold"
+                      : "text-slate-400 hover:text-slate-200"
                   }`}
                 >
                   Sign In
@@ -407,10 +487,12 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                   type="button"
                   onClick={() => {
                     setIsSignUp(true);
-                    setError('');
+                    setError("");
                   }}
                   className={`text-lg font-display font-semibold pb-1 relative transition-all cursor-pointer ${
-                    isSignUp ? 'text-white font-bold' : 'text-slate-400 hover:text-slate-200'
+                    isSignUp
+                      ? "text-white font-bold"
+                      : "text-slate-400 hover:text-slate-200"
                   }`}
                 >
                   Create Profile
@@ -423,7 +505,7 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                 </button>
               </div>
               <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-md font-mono uppercase">
-                {isSignUp ? 'REGISTRATION' : 'AUTHENTICATION'}
+                {isSignUp ? "REGISTRATION" : "AUTHENTICATION"}
               </span>
             </div>
 
@@ -464,23 +546,33 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                     {/* Laser scanning beam line */}
                     <motion.div
                       animate={{ y: [0, 80, 0] }}
-                      transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
+                      transition={{
+                        repeat: Infinity,
+                        duration: 1.5,
+                        ease: "easeInOut",
+                      }}
                       className="absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent shadow-[0_0_15px_rgba(245,158,11,0.8)] z-10"
                     />
-                    
+
                     {/* Pulsing Face ID ring */}
                     <div className="relative w-16 h-16 rounded-full border-2 border-dashed border-amber-500/50 flex items-center justify-center">
                       <motion.div
-                        animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.7, 0.3] }}
+                        animate={{
+                          scale: [1, 1.15, 1],
+                          opacity: [0.3, 0.7, 0.3],
+                        }}
                         transition={{ repeat: Infinity, duration: 1.5 }}
                         className="absolute inset-0 rounded-full border-2 border-amber-500/20"
                       />
+
                       <Fingerprint className="w-8 h-8 text-amber-400 animate-pulse" />
                     </div>
 
                     <div className="text-center">
                       <p className="text-xs font-mono font-bold text-white uppercase tracking-wider">
-                        {scanStep === 'scanning' ? 'Scanning Facial Biometrics...' : 'Identity Decoded!'}
+                        {scanStep === "scanning"
+                          ? "Scanning Facial Biometrics..."
+                          : "Identity Decoded!"}
                       </p>
                       <p className="text-[10px] text-slate-400 font-light mt-0.5">
                         Syncing credentials with encrypted hotel vaults
@@ -498,7 +590,7 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                     <div className="grid grid-cols-2 gap-2">
                       <button
                         type="button"
-                        onClick={() => triggerBiometricScan('GUEST')}
+                        onClick={() => triggerBiometricScan("GUEST")}
                         className="flex items-center justify-center gap-1.5 px-3 py-2 bg-gradient-to-r from-amber-600/15 to-amber-700/10 hover:from-amber-600/25 hover:to-amber-700/20 border border-amber-500/20 text-amber-400 text-xs font-bold rounded-xl transition-all cursor-pointer group"
                       >
                         <Fingerprint className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
@@ -506,7 +598,7 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                       </button>
                       <button
                         type="button"
-                        onClick={() => triggerBiometricScan('ADMIN')}
+                        onClick={() => triggerBiometricScan("ADMIN")}
                         className="flex items-center justify-center gap-1.5 px-3 py-2 bg-gradient-to-r from-amber-600/15 to-amber-700/10 hover:from-amber-600/25 hover:to-amber-700/20 border border-amber-500/20 text-amber-400 text-xs font-bold rounded-xl transition-all cursor-pointer group"
                       >
                         <ShieldCheck className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
@@ -516,18 +608,20 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
 
                     {/* Standard demo login credentials */}
                     <div className="flex items-center justify-between gap-2 pt-1">
-                      <span className="text-[9px] font-mono text-slate-400 uppercase">Or One-Tap Standard:</span>
+                      <span className="text-[9px] font-mono text-slate-400 uppercase">
+                        Or One-Tap Standard:
+                      </span>
                       <div className="flex gap-2">
                         <button
                           type="button"
-                          onClick={() => handleDemoLogin('GUEST')}
+                          onClick={() => handleDemoLogin("GUEST")}
                           className="px-2.5 py-1 bg-white/5 border border-white/5 text-slate-300 hover:text-white hover:bg-white/10 text-[10px] font-semibold rounded-lg transition-all cursor-pointer"
                         >
                           sarah@guest
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleDemoLogin('ADMIN')}
+                          onClick={() => handleDemoLogin("ADMIN")}
                           className="px-2.5 py-1 bg-white/5 border border-white/5 text-slate-300 hover:text-white hover:bg-white/10 text-[10px] font-semibold rounded-lg transition-all cursor-pointer"
                         >
                           michael@partner
@@ -582,18 +676,23 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                 <div className="relative">
                   <Lock className="absolute left-3.5 top-2.5 w-4.5 h-4.5 text-slate-500" />
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-10 pr-10 py-2.5 text-xs glass-input rounded-xl focus:border-amber-500 font-mono"
                   />
+
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-200 cursor-pointer"
                   >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
                   </button>
                 </div>
 
@@ -601,18 +700,29 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                 {password && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
+                    animate={{ opacity: 1, height: "auto" }}
                     className="mt-2 space-y-1"
                   >
                     <div className="flex justify-between items-center text-[9px] font-mono">
-                      <span className="text-slate-400">Vault Security Level:</span>
-                      <span className={`font-bold ${strength.textColor}`}>{strength.label}</span>
+                      <span className="text-slate-400">
+                        Vault Security Level:
+                      </span>
+                      <span className={`font-bold ${strength.textColor}`}>
+                        {strength.label}
+                      </span>
                     </div>
                     <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
                       <motion.div
                         className={`h-full ${strength.color}`}
                         initial={{ width: 0 }}
-                        animate={{ width: strength.score === 1 ? '33%' : strength.score === 2 ? '66%' : '100%' }}
+                        animate={{
+                          width:
+                            strength.score === 1
+                              ? "33%"
+                              : strength.score === 2
+                                ? "66%"
+                                : "100%",
+                        }}
                         transition={{ duration: 0.3 }}
                       />
                     </div>
@@ -629,11 +739,11 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
-                      onClick={() => setRole('GUEST')}
+                      onClick={() => setRole("GUEST")}
                       className={`py-2 text-[11px] font-semibold rounded-xl border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                        role === 'GUEST'
-                          ? 'bg-amber-500/15 text-amber-400 border-amber-500/30 shadow-md'
-                          : 'bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:text-slate-200'
+                        role === "GUEST"
+                          ? "bg-amber-500/15 text-amber-400 border-amber-500/30 shadow-md"
+                          : "bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:text-slate-200"
                       }`}
                     >
                       <UserIcon className="w-3.5 h-3.5" />
@@ -641,11 +751,11 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                     </button>
                     <button
                       type="button"
-                      onClick={() => setRole('ADMIN')}
+                      onClick={() => setRole("ADMIN")}
                       className={`py-2 text-[11px] font-semibold rounded-xl border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                        role === 'ADMIN'
-                          ? 'bg-amber-500/15 text-amber-400 border-amber-500/30 shadow-md'
-                          : 'bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:text-slate-200'
+                        role === "ADMIN"
+                          ? "bg-amber-500/15 text-amber-400 border-amber-500/30 shadow-md"
+                          : "bg-white/5 text-slate-400 border-white/5 hover:bg-white/10 hover:text-slate-200"
                       }`}
                     >
                       <ShieldCheck className="w-3.5 h-3.5" />
@@ -660,7 +770,9 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
                 type="submit"
                 className="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-white text-xs font-display font-semibold tracking-widest uppercase rounded-xl shadow-lg shadow-amber-600/15 border border-amber-500/25 transition-all mt-4 cursor-pointer flex items-center justify-center gap-2 group"
               >
-                {isSignUp ? 'Generate Resort Credentials' : 'Request Vault Clearance'}
+                {isSignUp
+                  ? "Generate Resort Credentials"
+                  : "Request Vault Clearance"}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </form>
@@ -671,11 +783,13 @@ export default function AuthModal({ onClose, onLoginSuccess, isGated = false }: 
               type="button"
               onClick={() => {
                 setIsSignUp(!isSignUp);
-                setError('');
+                setError("");
               }}
               className="text-xs font-medium text-amber-400 hover:text-amber-300 transition-colors cursor-pointer"
             >
-              {isSignUp ? 'Already have an automated profile? Sign In' : "Don't have credentials yet? Create Free Profile"}
+              {isSignUp
+                ? "Already have an automated profile? Sign In"
+                : "Don't have credentials yet? Create Free Profile"}
             </button>
           </div>
         </div>

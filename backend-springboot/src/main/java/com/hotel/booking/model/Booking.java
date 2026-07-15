@@ -31,4 +31,11 @@ public class Booking {
 
     @ElementCollection
     private List<String> addons;
+
+    private java.time.LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = java.time.LocalDateTime.now();
+    }
 }

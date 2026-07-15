@@ -1,25 +1,31 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Message, Hotel } from '../types';
-import { MessageSquare, Send, Sparkles, X, User, Bot, HelpCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import React, { useState, useRef, useEffect } from "react";
+import {
+  MessageSquare,
+  Send,
+  Sparkles,
+  X,
+  User,
+  Bot,
+  HelpCircle,
+} from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
-interface AIChatConciergeProps {
-  hotels: Hotel[];
-}
-
-export default function AIChatConcierge({ hotels }: AIChatConciergeProps) {
+export default function AIChatConcierge({ hotels }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
+  const [messages, setMessages] = useState([
     {
-      id: 'init',
-      role: 'model',
+      id: "init",
+      role: "model",
       text: "Bonjour! I am your Aura Haven AI Travel Advisor. I am fully integrated with our live resort inventory. Ask me to recommend a suite, draft a personalized holiday itinerary, or detail our custom spa amenities!",
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     },
   ]);
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef(null);
 
   const suggestionPrompts = [
     "Recommend a luxury suite with a pool.",
@@ -33,26 +39,29 @@ export default function AIChatConcierge({ hotels }: AIChatConciergeProps) {
     }
   }, [messages, isTyping]);
 
-  const handleSendMessage = async (textToSend: string) => {
+  const handleSendMessage = async (textToSend) => {
     if (!textToSend.trim()) return;
 
-    const userMsg: Message = {
+    const userMsg = {
       id: Math.random().toString(36).substring(2, 9),
-      role: 'user',
+      role: "user",
       text: textToSend,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
-    setInputText('');
+    setInputText("");
     setIsTyping(true);
 
     try {
       // Call full-stack server-side Gemini proxy endpoint!
-      const res = await fetch('/api/chat', {
-        method: 'POST',
+      const res = await fetch("/api/chat", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           message: textToSend,
@@ -76,19 +85,27 @@ export default function AIChatConcierge({ hotels }: AIChatConciergeProps) {
       });
 
       const data = await res.json();
-      const botMsg: Message = {
+      const botMsg = {
         id: Math.random().toString(36).substring(2, 9),
-        role: 'model',
-        text: data.text || "I apologize, but I am experiencing temporary difficulties reaching our booking ledger. Please try again soon.",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        role: "model",
+        text:
+          data.text ||
+          "I apologize, but I am experiencing temporary difficulties reaching our booking ledger. Please try again soon.",
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       };
       setMessages((prev) => [...prev, botMsg]);
     } catch (err) {
-      const errorMsg: Message = {
+      const errorMsg = {
         id: Math.random().toString(36).substring(2, 9),
-        role: 'model',
+        role: "model",
         text: "My apologies, the resort network seems slightly delayed. Please ensure the Gemini API Key is configured correctly in Secrets.",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
       };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
@@ -109,7 +126,9 @@ export default function AIChatConcierge({ hotels }: AIChatConciergeProps) {
             className="flex items-center gap-2 px-4.5 py-3.5 bg-amber-600 hover:bg-amber-500 text-white rounded-full shadow-lg shadow-amber-600/15 transition-all cursor-pointer border border-amber-500/25"
           >
             <MessageSquare className="w-5 h-5" />
-            <span className="text-xs font-display font-semibold tracking-wide pr-1">Concierge Advisor</span>
+            <span className="text-xs font-display font-semibold tracking-wide pr-1">
+              Concierge Advisor
+            </span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -131,8 +150,12 @@ export default function AIChatConcierge({ hotels }: AIChatConciergeProps) {
                   <Sparkles className="w-4.5 h-4.5 fill-amber-500/10 animate-pulse" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-display font-semibold tracking-wide text-white">Aura Haven Concierge</h4>
-                  <span className="text-[10px] text-amber-400 font-mono font-bold tracking-wider">POWERED BY GEMINI AI</span>
+                  <h4 className="text-sm font-display font-semibold tracking-wide text-white">
+                    Aura Haven Concierge
+                  </h4>
+                  <span className="text-[10px] text-amber-400 font-mono font-bold tracking-wider">
+                    POWERED BY GEMINI AI
+                  </span>
                 </div>
               </div>
               <button
@@ -144,26 +167,44 @@ export default function AIChatConcierge({ hotels }: AIChatConciergeProps) {
             </div>
 
             {/* Bubble logs body */}
-            <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto space-y-4 bg-transparent">
+            <div
+              ref={scrollRef}
+              className="flex-1 p-4 overflow-y-auto space-y-4 bg-transparent"
+            >
               {messages.map((m) => {
-                const isBot = m.role === 'model';
+                const isBot = m.role === "model";
                 return (
-                  <div key={m.id} className={`flex items-start gap-2.5 ${isBot ? '' : 'flex-row-reverse'}`}>
-                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 shadow-md ${
-                      isBot ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-amber-600 text-white shadow-lg shadow-amber-600/15'
-                    }`}>
-                      {isBot ? <Bot className="w-4 h-4" /> : <User className="w-4 h-4" />}
+                  <div
+                    key={m.id}
+                    className={`flex items-start gap-2.5 ${isBot ? "" : "flex-row-reverse"}`}
+                  >
+                    <div
+                      className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 shadow-md ${
+                        isBot
+                          ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                          : "bg-amber-600 text-white shadow-lg shadow-amber-600/15"
+                      }`}
+                    >
+                      {isBot ? (
+                        <Bot className="w-4 h-4" />
+                      ) : (
+                        <User className="w-4 h-4" />
+                      )}
                     </div>
 
                     <div className="space-y-1 max-w-[78%]">
-                      <div className={`p-3 rounded-2xl text-xs leading-relaxed ${
-                        isBot
-                          ? 'bg-white/5 text-slate-100 border border-white/5 rounded-tl-none shadow-sm'
-                          : 'bg-amber-600 text-white rounded-tr-none shadow-md shadow-amber-600/10'
-                      }`}>
+                      <div
+                        className={`p-3 rounded-2xl text-xs leading-relaxed ${
+                          isBot
+                            ? "bg-white/5 text-slate-100 border border-white/5 rounded-tl-none shadow-sm"
+                            : "bg-amber-600 text-white rounded-tr-none shadow-md shadow-amber-600/10"
+                        }`}
+                      >
                         {m.text}
                       </div>
-                      <span className={`text-[9px] text-slate-500 block font-mono ${isBot ? 'text-left' : 'text-right'}`}>
+                      <span
+                        className={`text-[9px] text-slate-500 block font-mono ${isBot ? "text-left" : "text-right"}`}
+                      >
                         {m.timestamp}
                       </span>
                     </div>
@@ -177,10 +218,21 @@ export default function AIChatConcierge({ hotels }: AIChatConciergeProps) {
                     <Bot className="w-4 h-4 animate-bounce" />
                   </div>
                   <div className="bg-white/5 border border-white/5 p-3 rounded-2xl rounded-tl-none shadow-sm text-xs text-slate-400 font-medium flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                    <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                    <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                    <span className="italic pl-1 text-slate-400">Consulting resort ledgers...</span>
+                    <span
+                      className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "0ms" }}
+                    />
+                    <span
+                      className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "150ms" }}
+                    />
+                    <span
+                      className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "300ms" }}
+                    />
+                    <span className="italic pl-1 text-slate-400">
+                      Consulting resort ledgers...
+                    </span>
                   </div>
                 </div>
               )}
@@ -213,10 +265,13 @@ export default function AIChatConcierge({ hotels }: AIChatConciergeProps) {
                 type="text"
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSendMessage(inputText)}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && handleSendMessage(inputText)
+                }
                 placeholder="Ask our concierge traveler assistant..."
                 className="flex-1 glass-input rounded-xl px-3.5 py-2 text-xs"
               />
+
               <button
                 onClick={() => handleSendMessage(inputText)}
                 className="p-2.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl shadow-lg shadow-amber-600/15 border border-amber-500/25 transition-all cursor-pointer"
