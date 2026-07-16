@@ -5,6 +5,8 @@ import {
   LogOut,
   ShieldAlert,
   BookOpen,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 export default function Navigation({
@@ -13,6 +15,8 @@ export default function Navigation({
   onLogout,
   currentTab,
   onChangeTab,
+  theme,
+  onToggleTheme,
 }) {
   return (
     <nav className="sticky top-0 z-40 bg-[#070913]/75 backdrop-blur-xl border-b border-white/5 shadow-2xl">
@@ -71,6 +75,19 @@ export default function Navigation({
                 Partner Portal
               </button>
             )}
+
+            {/* Theme Toggle Button */}
+            <button
+              onClick={onToggleTheme}
+              className="p-2 text-slate-300 hover:text-amber-400 bg-white/5 hover:bg-white/10 rounded-xl transition-all cursor-pointer border border-white/5 flex items-center justify-center"
+              title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-amber-600" />
+              )}
+            </button>
 
             {/* Auth Button / User Chip */}
             {user ? (

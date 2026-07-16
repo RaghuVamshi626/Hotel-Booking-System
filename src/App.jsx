@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navigation from "./components/Navigation";
 import Hero from "./components/Hero";
 import AuthModal from "./components/AuthModal";
@@ -10,11 +10,25 @@ import AdminDashboard from "./components/AdminDashboard";
 import AIChatConcierge from "./components/AIChatConcierge";
 import { initialHotels } from "./data";
 import { motion, AnimatePresence } from "motion/react";
+import { Sun, Moon } from "lucide-react";
 
 export default function App() {
   const [user, setUser] = useState(null);
+  const [theme, setTheme] = useState("dark"); // Default is dark theme
 
   const [hotels, setHotels] = useState(initialHotels);
+
+  useEffect(() => {
+    if (theme === "light") {
+      document.body.classList.add("light-mode-active");
+    } else {
+      document.body.classList.remove("light-mode-active");
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
 
   const [bookings, setBookings] = useState([
     {
@@ -224,7 +238,22 @@ export default function App() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#070913] flex items-center justify-center relative p-4 overflow-y-auto selection:bg-amber-100 selection:text-amber-900">
+      <div className={`min-h-screen ${theme === "dark" ? "bg-[#070913]" : "light-theme bg-[#faf8f5]"} flex items-center justify-center relative p-4 overflow-y-auto selection:bg-amber-100 selection:text-amber-900 transition-colors duration-300`}>
+        {/* Floating Theme Toggle on Gated Login Screen */}
+        <div className="absolute top-4 right-4 z-50">
+          <button
+            onClick={toggleTheme}
+            className="p-2.5 text-slate-300 hover:text-amber-400 bg-white/5 hover:bg-white/10 rounded-xl transition-all cursor-pointer border border-white/5 flex items-center justify-center shadow-lg"
+            title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {theme === "dark" ? (
+              <span className="flex items-center gap-2 text-xs font-medium"><Sun className="w-4 h-4 text-amber-400" /> Light Mode</span>
+            ) : (
+              <span className="flex items-center gap-2 text-xs font-medium text-slate-800"><Moon className="w-4 h-4 text-amber-600" /> Dark Mode</span>
+            )}
+          </button>
+        </div>
+
         {/* Ambient background blur circles */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-amber-600/5 rounded-full blur-3xl pointer-events-none" />
@@ -235,7 +264,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/50 flex flex-col justify-between font-sans selection:bg-amber-100 selection:text-amber-900">
+    <div className={`min-h-screen ${theme === "dark" ? "bg-gradient-to-b from-[#070913] via-[#0d102b] to-[#070913] text-white" : "light-theme bg-gradient-to-b from-[#faf8f5] via-[#f5f2eb] to-[#faf8f5] text-slate-900"} flex flex-col justify-between font-sans selection:bg-amber-100 selection:text-amber-900 transition-colors duration-300`}>
       <div className="w-full">
         {/* Navigation Bar */}
         <Navigation
@@ -244,6 +273,8 @@ export default function App() {
           onLogout={handleLogout}
           currentTab={currentTab}
           onChangeTab={(tab) => setCurrentTab(tab)}
+          theme={theme}
+          onToggleTheme={toggleTheme}
         />
 
         {/* Content Tabs */}
